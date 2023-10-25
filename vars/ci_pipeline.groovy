@@ -1,5 +1,8 @@
 //def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID ){
 def call(Map config = [:]) {
+
+pipeline{
+    agent any 
     stages 
     {
        stage('Checkout') 
@@ -60,7 +63,7 @@ def call(Map config = [:]) {
         }
     }
        
-
+}
     
 }
 
