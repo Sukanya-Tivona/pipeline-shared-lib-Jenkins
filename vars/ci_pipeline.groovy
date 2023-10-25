@@ -1,5 +1,5 @@
-def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID ){
-
+//def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID ){
+def call(Map config = [;]) {
     stages 
     {
        stage('Checkout') 
@@ -20,8 +20,9 @@ def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  
        steps { sh '''
               aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
               aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-              aws configure set default.region $AWS_DEFAULT_REGION
-              aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+              aws configure set default.region $config.AWS_DEFAULT_REGION
+              aws ecr get-login-password --region ${config.AWS_DEFAULT_REGION} | 
+              docker login --username AWS --password-stdin ${config.AWS_ACCOUNT_ID}.dkr.ecr.${config.AWS_DEFAULT_REGION}.amazonaws.com
                '''
          
               }
@@ -38,12 +39,12 @@ def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  
               def IMAGENAMES = ['data-read', 'data-write', 'timelines']
               for (IMAGENAME in IMAGENAMES) 
               {  
-                sh "cp $HOME/workspace/$projectname/ol-container-images-node/Dockerfile $HOME/workspace/$projectname/ol-services-node/ol-node-api-$IMAGENAME"
-                  dir("$HOME/workspace/$projectname/ol-services-node/ol-node-api-${IMAGENAME}")
+                sh "cp $HOME/workspace/$config.projectname/ol-container-images-node/Dockerfile $HOME/workspace/$config.projectname/ol-services-node/ol-node-api-$IMAGENAME"
+                  dir("$HOME/workspace/$config.projectname/ol-services-node/ol-node-api-${IMAGENAME}")
                   {    
-                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} ."
+                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${config.IMAGEVERSION} ."
                     // sh "docker tag ${IMAGENAME} ${REPOSITORY_URI}:${IMAGEVERSION}"
-                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} "
+                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${config.IMAGEVERSION} "
                   }
               }
        }
