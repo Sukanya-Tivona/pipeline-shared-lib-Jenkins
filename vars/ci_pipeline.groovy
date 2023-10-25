@@ -1,5 +1,5 @@
 //def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID ){
-def call(Map config = [;]) {
+def call(Map config = [:]) {
     stages 
     {
        stage('Checkout') 
