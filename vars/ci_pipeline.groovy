@@ -1,7 +1,7 @@
 //def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID,
 //AWS_ACCESS_KEY_ID = env.AWS_ACCESS_KEY_ID ,AWS_SECRET_ACCESS_KEY = env.AWS_SECRET_ACCESS_KEY,PAT = env.PAT ){
 
-@Library(['pipeline-utility']) _
+//@Library(['pipeline-utility']) _
 def call(Map params = [:]) {
     environment
      {
