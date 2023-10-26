@@ -13,6 +13,7 @@ def call(Map config) {
         stages {
             stage('Checkout') {
                 steps {
+                    withCredentials([usernamePassword(credentialsId: 'My_Github_Tivona_login', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh '''
                         git clone -b main https://$PAT@github.com/Observe-Life-AI/ol-services-node.git
                         git clone -b feature/OLMS-54-initial-node-container https://$PAT@github.com/Observe-Life-AI/ol-container-images-node.git
