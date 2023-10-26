@@ -1,23 +1,31 @@
 //def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID,
 //AWS_ACCESS_KEY_ID = env.AWS_ACCESS_KEY_ID ,AWS_SECRET_ACCESS_KEY = env.AWS_SECRET_ACCESS_KEY,PAT = env.PAT ){
-def call(Map params) {
+
+@Library(['pipeline-utility']) _
+def call(Map params = [:]) {
     environment
      {
-      AWS_ACCESS_KEY_ID     = credentials('params.aws_pratice')
-      AWS_SECRET_ACCESS_KEY = credentials('params.aws_pratice')
-      PAT = credentials('PAT')
+      AWS_ACCESS_KEY_ID     = credentials(params.aws_pratice)
+      AWS_SECRET_ACCESS_KEY = credentials(params.aws_pratice)
+      PAT = credentials(params.PAT)
       REPOSITORY_URI = "${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_DEFAULT_REGION}.amazonaws.com"
+      //IMAGEVERSION = '7.0'
+      //projectname = 'ci_shared_lib_oct_25'
+      //AWS_DEFAULT_REGION = 'us-west-1'
+      
+     //AWS_ACCOUNT_ID :'562922379100'
+
       //APPLICATION_REPO_URL = ""
     
       }
 
     agent any
-     parameters {							
-       string(name: 'IMAGEVERSION', defaultValue: '1.0', description: 'Version number to build for')
-       string(name: 'projectname', defaultValue: 'yourpipelinename', description: 'name of the pipeline')
-       string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-west-2', description: 'region name')
-       string(name: 'AWS_ACCOUNT_ID', defaultValue: '562922379100', description: 'aws account id')
-    }
+      parameters {							
+        string(name: 'IMAGEVERSION', defaultValue: '1.0', description: 'Version number to build for')
+        string(name: 'projectname', defaultValue: 'yourpipelinename', description: 'name of the pipeline')
+        string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-west-2', description: 'region name')
+        string(name: 'AWS_ACCOUNT_ID', defaultValue: '562922379100', description: 'aws account id')
+     }
 
   
     stages 
@@ -38,11 +46,11 @@ def call(Map params) {
        stage('AWS configure and ecr login ') 
        {
        steps{ sh '''
-              aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-              aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-              aws configure set default.region $AWS_DEFAULT_REGION
-              aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | 
-              docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+              aws configure set aws_access_key_id $params.AWS_ACCESS_KEY_ID
+              aws configure set aws_secret_access_key $params.AWS_SECRET_ACCESS_KEY
+              aws configure set default.region $params.AWS_DEFAULT_REGION
+              aws ecr get-login-password --region ${params.AWS_DEFAULT_REGION} | 
+              docker login --username AWS --password-stdin ${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_DEFAULT_REGION}.amazonaws.com
                '''
          
             }
