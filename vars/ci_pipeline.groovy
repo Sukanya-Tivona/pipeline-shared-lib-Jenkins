@@ -1,23 +1,25 @@
 //def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID,
 //AWS_ACCESS_KEY_ID = env.AWS_ACCESS_KEY_ID ,AWS_SECRET_ACCESS_KEY = env.AWS_SECRET_ACCESS_KEY,PAT = env.PAT ){
-def call(Map params) {
-//Map pipeline{
-
-    agent any 
+def cll(Map params) {
     environment
-       {
-        //AWS_ACCOUNT_ID="562922379100"
-        //AWS_DEFAULT_REGION="us-west-2"
-        AWS_ACCESS_KEY_ID     = credentials('aws_pratice')
-        AWS_SECRET_ACCESS_KEY = credentials('aws_pratice')
-        PAT = credentials('PAT')
+     {
+      AWS_ACCESS_KEY_ID     = credentials('params.aws_pratice')
+      AWS_SECRET_ACCESS_KEY = credentials('params.aws_pratice')
+      PAT = credentials('PAT')
+      REPOSITORY_URI = "${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_DEFAULT_REGION}.amazonaws.com"
+      //APPLICATION_REPO_URL = ""
+    
+      }
 
-        //APPLICATION_URL = "https://$PAT@github.com/Observe-Life-AI/ol-services-node.git"
-        
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-        //APPLICATION_REPO_URL = ""
-        //http://562922379100.dkr.ecr.us-west-2.amazonaws.com/devtools1
-        }
+    agent any
+     parameters {							
+       string(name: 'IMAGEVERSION', defaultValue: '1.0', description: 'Version number to build for')
+       string(name: 'projectname', defaultValue: 'yourpipelinename', description: 'name of the pipeline')
+       string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-west-2', description: 'region name')
+       string(name: 'AWS_ACCOUNT_ID', defaultValue: '562922379100', description: 'aws account id')
+    }
+
+  
     stages 
     {
        stage('Checkout') 
@@ -57,12 +59,12 @@ def call(Map params) {
               def IMAGENAMES = ['data-read', 'data-write', 'timelines']
               for (IMAGENAME in IMAGENAMES) 
               {  
-                sh "cp $HOME/workspace/$projectname/ol-container-images-node/Dockerfile $HOME/workspace/$projectname/ol-services-node/ol-node-api-$IMAGENAME"
-                  dir("$HOME/workspace/$projectname/ol-services-node/ol-node-api-${IMAGENAME}")
+                sh "cp $HOME/workspace/$params.projectname/ol-container-images-node/Dockerfile $HOME/workspace/$params.projectname/ol-services-node/ol-node-api-$IMAGENAME"
+                  dir("$HOME/workspace/$params.projectname/ol-services-node/ol-node-api-${IMAGENAME}")
                   {    
-                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} ."
+                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${params.IMAGEVERSION} ."
                     // sh "docker tag ${IMAGENAME} ${REPOSITORY_URI}:${IMAGEVERSION}"
-                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} "
+                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${params.IMAGEVERSION} "
                   }
               }
        }
