@@ -1,17 +1,17 @@
 //def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID,
 //AWS_ACCESS_KEY_ID = env.AWS_ACCESS_KEY_ID ,AWS_SECRET_ACCESS_KEY = env.AWS_SECRET_ACCESS_KEY,PAT = env.PAT ){
-def call(Map pipelineParams) {
-
-pipeline{
+def call() {
+//Map pipeline{
 
     agent any 
     environment
        {
-        //AWS_ACCOUNT_ID="562922379100"
-        //AWS_DEFAULT_REGION="us-west-2"
+        AWS_ACCOUNT_ID="562922379100"
+        AWS_DEFAULT_REGION="us-west-2"
         AWS_ACCESS_KEY_ID     = credentials('aws_pratice')
         AWS_SECRET_ACCESS_KEY = credentials('aws_pratice')
         PAT = credentials('PAT')
+
         //APPLICATION_URL = "https://$PAT@github.com/Observe-Life-AI/ol-services-node.git"
         
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
@@ -57,12 +57,12 @@ pipeline{
               def IMAGENAMES = ['data-read', 'data-write', 'timelines']
               for (IMAGENAME in IMAGENAMES) 
               {  
-                sh "cp $HOME/workspace/$pipelineParams.projectname/ol-container-images-node/Dockerfile $HOME/workspace/$pipelineParams.projectname/ol-services-node/ol-node-api-$IMAGENAME"
-                  dir("$HOME/workspace/$pipelineParams.projectname/ol-services-node/ol-node-api-${IMAGENAME}")
+                sh "cp $HOME/workspace/$projectname/ol-container-images-node/Dockerfile $HOME/workspace/$projectname/ol-services-node/ol-node-api-$IMAGENAME"
+                  dir("$HOME/workspace/$projectname/ol-services-node/ol-node-api-${IMAGENAME}")
                   {    
-                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${pipelineParams.IMAGEVERSION} ."
+                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} ."
                     // sh "docker tag ${IMAGENAME} ${REPOSITORY_URI}:${IMAGEVERSION}"
-                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${pipelineParams.IMAGEVERSION} "
+                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} "
                   }
               }
        }
@@ -80,7 +80,7 @@ pipeline{
        
 }
     
-}
+
 
 	  
 
