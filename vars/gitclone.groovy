@@ -3,7 +3,7 @@ def call() {
       environment
      {
       
-      PAT = credentials(params.PAT)
+      PAT = credentials('PAT')
     
       }
       agent any
