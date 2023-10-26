@@ -1,13 +1,13 @@
 //def call( String IMAGEVERSION, String projectname,  String AWS_DEFAULT_REGION,  String AWS_ACCOUNT_ID,
 //AWS_ACCESS_KEY_ID = env.AWS_ACCESS_KEY_ID ,AWS_SECRET_ACCESS_KEY = env.AWS_SECRET_ACCESS_KEY,PAT = env.PAT ){
-def call() {
- pipeline{
+def call(Map params) {
+//Map pipeline{
 
     agent any 
     environment
        {
-        AWS_ACCOUNT_ID="562922379100"
-        AWS_DEFAULT_REGION="us-west-2"
+        //AWS_ACCOUNT_ID="562922379100"
+        //AWS_DEFAULT_REGION="us-west-2"
         AWS_ACCESS_KEY_ID     = credentials('aws_pratice')
         AWS_SECRET_ACCESS_KEY = credentials('aws_pratice')
         PAT = credentials('PAT')
@@ -38,9 +38,9 @@ def call() {
        steps{ sh '''
               aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
               aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-              aws configure set default.region $config.AWS_DEFAULT_REGION
-              aws ecr get-login-password --region ${config.AWS_DEFAULT_REGION} | 
-              docker login --username AWS --password-stdin ${config.AWS_ACCOUNT_ID}.dkr.ecr.${config.AWS_DEFAULT_REGION}.amazonaws.com
+              aws configure set default.region $params.AWS_DEFAULT_REGION
+              aws ecr get-login-password --region ${params.AWS_DEFAULT_REGION} | 
+              docker login --username AWS --password-stdin ${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_DEFAULT_REGION}.amazonaws.com
                '''
          
             }
@@ -57,12 +57,12 @@ def call() {
               def IMAGENAMES = ['data-read', 'data-write', 'timelines']
               for (IMAGENAME in IMAGENAMES) 
               {  
-                sh "cp $HOME/workspace/$projectname/ol-container-images-node/Dockerfile $HOME/workspace/$projectname/ol-services-node/ol-node-api-$IMAGENAME"
-                  dir("$HOME/workspace/$projectname/ol-services-node/ol-node-api-${IMAGENAME}")
+                sh "cp $HOME/workspace/$params.projectname/ol-container-images-node/Dockerfile $HOME/workspace/$params.projectname/ol-services-node/ol-node-api-$IMAGENAME"
+                  dir("$HOME/workspace/$params.projectname/ol-services-node/ol-node-api-${IMAGENAME}")
                   {    
-                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} ."
+                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${params.IMAGEVERSION} ."
                     // sh "docker tag ${IMAGENAME} ${REPOSITORY_URI}:${IMAGEVERSION}"
-                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} "
+                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${paramsIMAGEVERSION} "
                   }
               }
        }
@@ -77,7 +77,7 @@ def call() {
             cleanWs()
         }
     }
- }
+       
 }
     
 
