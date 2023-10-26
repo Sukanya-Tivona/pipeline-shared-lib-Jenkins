@@ -20,12 +20,12 @@ def call(Map params = [:]) {
       }
 
     agent any
-      parameters {							
-        string(name: 'IMAGEVERSION', defaultValue: '1.0', description: 'Version number to build for')
-        string(name: 'projectname', defaultValue: 'yourpipelinename', description: 'name of the pipeline')
-        string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-west-2', description: 'region name')
-        string(name: 'AWS_ACCOUNT_ID', defaultValue: '562922379100', description: 'aws account id')
-     }
+     //  parameters {							
+     //    string(name: 'IMAGEVERSION', defaultValue: '1.0', description: 'Version number to build for')
+     //    string(name: 'projectname', defaultValue: 'yourpipelinename', description: 'name of the pipeline')
+     //    string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-west-2', description: 'region name')
+     //    string(name: 'AWS_ACCOUNT_ID', defaultValue: '562922379100', description: 'aws account id')
+     // }
 
   
     stages 
