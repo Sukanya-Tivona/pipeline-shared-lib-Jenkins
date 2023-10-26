@@ -38,9 +38,9 @@ def call(Map params) {
        steps{ sh '''
               aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
               aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-              aws configure set default.region $params.AWS_DEFAULT_REGION
-              aws ecr get-login-password --region ${params.AWS_DEFAULT_REGION} | 
-              docker login --username AWS --password-stdin ${params.AWS_ACCOUNT_ID}.dkr.ecr.${params.AWS_DEFAULT_REGION}.amazonaws.com
+              aws configure set default.region $AWS_DEFAULT_REGION
+              aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | 
+              docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
                '''
          
             }
@@ -57,12 +57,12 @@ def call(Map params) {
               def IMAGENAMES = ['data-read', 'data-write', 'timelines']
               for (IMAGENAME in IMAGENAMES) 
               {  
-                sh "cp $HOME/workspace/$params.projectname/ol-container-images-node/Dockerfile $HOME/workspace/$params.projectname/ol-services-node/ol-node-api-$IMAGENAME"
-                  dir("$HOME/workspace/$params.projectname/ol-services-node/ol-node-api-${IMAGENAME}")
+                sh "cp $HOME/workspace/$projectname/ol-container-images-node/Dockerfile $HOME/workspace/$projectname/ol-services-node/ol-node-api-$IMAGENAME"
+                  dir("$HOME/workspace/$projectname/ol-services-node/ol-node-api-${IMAGENAME}")
                   {    
-                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${params.IMAGEVERSION} ."
+                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} ."
                     // sh "docker tag ${IMAGENAME} ${REPOSITORY_URI}:${IMAGEVERSION}"
-                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${paramsIMAGEVERSION} "
+                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} "
                   }
               }
        }
