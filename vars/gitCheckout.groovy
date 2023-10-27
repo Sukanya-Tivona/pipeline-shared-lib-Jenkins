@@ -1,7 +1,11 @@
-#!/usr/bin/env groovy
-def call(String repoUrl, String branch){
-   def workingDir = "${env.WORKSPACE}"
-   sh "git clone ${repoUrl} ${workingDir}"
-   sh "git checkout ${branch}"
-   return workingDir
+def call(def repo, def branchName){
+
+    script{
+        dir(repo) {
+            git branch: "${branchName}",
+                    credentialsId: 'github-account',
+                    url: "https://github.com/Observe-Life-AI/${repo}.git"
+        }
+    }
+
 }
