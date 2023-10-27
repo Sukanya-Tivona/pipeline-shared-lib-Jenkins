@@ -5,7 +5,7 @@ def call(Map pipelineParams) {
         environment {
             AWS_ACCESS_KEY_ID     = credentials(pipelineParams.awsAccessKeyId).toString()
             AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsAccessKeyId).toString()
-            REPOSITORY_URI = "${pipelineParams.awsAccountId}.dkr.ecr.${pipelineParams.awsRegion}.amazonaws.com"
+            
             PAT = credentials(pipelineParams.pat).toString()
         }
 
@@ -40,6 +40,9 @@ def call(Map pipelineParams) {
        //sudo chmod 777 /var/run/docker.sock
        stage('Build and Push Docker Images')
        {
+        environment{
+				REPOSITORY_URI = "${pipelineParams.awsAccountId}.dkr.ecr.${pipelineParams.awsRegion}.amazonaws.com"
+        }
        steps
        {
        script
