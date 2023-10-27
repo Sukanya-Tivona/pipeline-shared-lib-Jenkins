@@ -62,7 +62,7 @@ def call(Map pipelineParams) {
        }
        }
        }
-    }
+    
    //post build cleanup
     post {
         cleanup {
@@ -71,4 +71,6 @@ def call(Map pipelineParams) {
         }
     }
     }
+}
+}
 
