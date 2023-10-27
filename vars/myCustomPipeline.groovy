@@ -6,7 +6,7 @@ def call(Map pipelineParams) {
             AWS_ACCESS_KEY_ID     = credentials(pipelineParams.awsAccessKeyId).toString()
             AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsAccessKeyId).toString()
             REPOSITORY_URI = "${pipelineParams.awsAccountId}.dkr.ecr.${pipelineParams.awsRegion}.amazonaws.com"
-            PAT = credentials(pipelineParams.PAT).toString()
+            PAT = credentials(pipelineParams.pat).toString()
         }
 
         parameters {
