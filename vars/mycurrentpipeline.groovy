@@ -4,7 +4,7 @@ def call(Map pipelineParams) {
 
         environment {
             AWS_ACCESS_KEY_ID     = credentials(pipelineParams.awsAccessKeyId).toString()
-            AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsAccessKeyId).toString()
+            AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsSecretAccessKey).toString()
             
            // PAT = credentials(pipelineParams.pat).toString()
         }
@@ -18,7 +18,7 @@ def call(Map pipelineParams) {
 	   //credentials(name:'aws_pratice', description:'my aws credentials', required:true)					
     }							
 	
-        }
+        
     stages
     {
        stage('Checkout')
