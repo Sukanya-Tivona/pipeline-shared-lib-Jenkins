@@ -2,19 +2,21 @@ def call(Map pipelineParams) {
     pipeline {
         agent any
 
-        environment {
-            AWS_ACCESS_KEY_ID     = credentials(pipelineParams.awsAccessKeyId).toString()
-            AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsAccessKeyId).toString()
+        // environment {
+        //     AWS_ACCESS_KEY_ID     = credentials(pipelineParams.awsAccessKeyId).toString()
+        //     AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsAccessKeyId).toString()
             
-           // PAT = credentials(pipelineParams.pat).toString()
-        }
+        //     PAT = credentials(pipelineParams.pat).toString()
+        // }
 
         parameters {
             string(name: 'IMAGEVERSION', defaultValue: '1.0', description: 'Version number to build for')
             string(name: 'projectname', defaultValue: 'yourpipelinename', description: 'name of the pipeline')
             string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-west-2', description: 'region name')
             string(name: 'AWS_ACCOUNT_ID', defaultValue: '562922379100', description: 'aws account id')
-	string(name: 'PAT', defaultValue: '562922379100', description: 'give the value of pat')
+	   string(name: 'PAT', defaultValue: '562922379100', description: 'give the value of pat')
+	   credentials(name:'aws_pratice', description:'my aws credentials', required:true)					
+    }							
 	
         }
     stages
