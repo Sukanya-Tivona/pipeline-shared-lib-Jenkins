@@ -1,17 +1,8 @@
 #!/usr/bin/env groovy
-def call(Map config) {
-    def credentialsId = config.credentialsId
-    def repositoryUrl = config.repositoryUrl
-    def branch = config.branch ?: 'main'
-    def destination = config.destination ?: '.'
-
-    script {
-        withCredentials([string(credentialsId: credentialsId)]) {
-            checkout([$class: 'GitSCM', 
-                userRemoteConfigs: [[url: repositoryUrl]],
-                branches: [[name: branch]],
-                extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: destination]]
-            ])
-        }
-    }
+def call(String repo, String branch='master') {
+  echo "||------ CLONING $repo ------||"
+  
+  git branch: branch, changelog: false, credentialsId: 'jenkinsgit', poll: false, url: "git@github.com:myprivateorg/$repo.git"
 }
+
+return this
