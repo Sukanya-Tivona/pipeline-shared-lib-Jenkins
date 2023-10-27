@@ -62,14 +62,14 @@ def call(Map pipelineParams) {
        }
        }
        }
-    
+    }
    //post build cleanup
     post {
         cleanup {
             echo "Clean up in post work space"
             cleanWs()
         }
-    }
+    
     }
 }
 }
