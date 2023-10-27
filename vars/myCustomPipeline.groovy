@@ -16,13 +16,22 @@ def call(Map pipelineParams) {
         }
 
         stages {
-            stage('Checkout') {
-                steps {
-                    script {
-                        checkoutGit(pipelineParams)
-                    }
-                }
-            }
+            // stage('Checkout') {
+            //     steps {
+            //         script {
+            //             checkoutGit(pipelineParams)
+            //         }
+            //     }
+            // }
+            stage('Checkout')
+             {
+       steps {
+          sh '''
+              git clone -b main https://$PAT@github.com/Observe-Life-AI/ol-services-node.git
+              git clone -b feature/OLMS-54-initial-node-container https://$PAT@github.com/Observe-Life-AI/ol-container-images-node.git
+          '''
+               }
+             }
 
             stage('AWS configure and ECR login') {
                 steps {
