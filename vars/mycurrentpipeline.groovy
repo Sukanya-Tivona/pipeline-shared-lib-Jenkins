@@ -44,13 +44,10 @@ def call(Map pipelineParams) {
        //sudo chmod 777 /var/run/docker.sock
        stage('Build and Push Docker Images')
        {
-        environment{
-				REPOSITORY_URI = "${pipelineParams.awsAccountId}.dkr.ecr.${pipelineParams.awsRegion}.amazonaws.com"
-        }
        steps
        {
        script
-       {
+       {      def  REPOSITORY_URI = "${pipelineParams.awsAccountId}.dkr.ecr.${pipelineParams.awsRegion}.amazonaws.com"
               def IMAGENAMES = ['data-read', 'data-write', 'timelines']
               for (IMAGENAME in IMAGENAMES)
               {
