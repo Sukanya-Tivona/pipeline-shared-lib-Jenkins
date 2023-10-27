@@ -3,8 +3,8 @@ def call(Map pipelineParams) {
         agent any
 
         environment {
-            AWS_ACCESS_KEY_ID     = credentials(pipelineParams.awsAccessKeyId.toString())
-            AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsSecretAccessKey.toString())
+            AWS_ACCESS_KEY_ID     = credentials(pipelineParams.awsAccessKeyId).toString()
+            AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsAccessKeyId).toString()
             REPOSITORY_URI = "${pipelineParams.awsAccountId}.dkr.ecr.${pipelineParams.awsRegion}.amazonaws.com"
         }
 
