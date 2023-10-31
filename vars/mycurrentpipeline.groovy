@@ -1,24 +1,20 @@
 def call(Map pipelineParams = [:]) {
-    pipeline {
-        agent any
-
-        environment {
-            AWS_ACCESS_KEY_ID     = credentials(pipelineParams.awsAccessKeyId)
-            AWS_SECRET_ACCESS_KEY = credentials(pipelineParams.awsSecretAccessKey)
-            
-           // PAT = credentials(pipelineParams.pat).toString()
-        }
-
-        parameters {
-            string(name: 'IMAGEVERSION', defaultValue: '1.0', description: 'Version number to build for')
-            string(name: 'projectname', defaultValue: 'yourpipelinename', description: 'name of the pipeline')
-            string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-west-2', description: 'region name')
-            string(name: 'AWS_ACCOUNT_ID', defaultValue: '562922379100', description: 'aws account id')
-	   string(name: 'PAT', defaultValue: '562922379100', description: 'give the value of pat')
-	   //credentials(name:'aws_pratice', description:'my aws credentials', required:true)					
-    }							
-	
-        
+pipeline {
+environment {
+aws_account_id= credentials('AWS_ACCOUNT_ID')
+aws_default_region="us-west-2"
+AWS_ACCESS_KEY_ID     = credentials('aws_pratice')
+AWS_SECRET_ACCESS_KEY = credentials('aws_pratice')
+PAT = credentials('PAT')
+repository_uri = "${aws_account_id}.dkr.ecr.${aws_default_region}.amazonaws.com"
+}
+    agent any							
+    parameters {							
+       string(name: 'image_version', defaultValue: '', description: 'image version to be build')
+      // string(name: 'aws_default_region', defaultValue: 'us-west-2', description: 'region name')
+      // extendedChoice multiSelectDelimiter: ',', name: 'image_names', quoteValue: false, saveJSONParameterToFile: false, type: 'PT_CHECKBOX', value: 'data-read,data-write,timelines', visibleItemCount: 3
+       }							
+   	
     stages
     {
        stage('Checkout')
@@ -33,10 +29,12 @@ def call(Map pipelineParams = [:]) {
        stage('AWS configure and ecr login ')
        {
        steps { sh '''
+              
               aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
               aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-              aws configure set default.region $AWS_DEFAULT_REGION
-              aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+              aws configure set default.region $aws_default_region
+       
+              aws ecr get-login-password --region ${aws_default_region} | docker login --username AWS --password-stdin ${aws_account_id}.dkr.ecr.${aws_default_region}.amazonaws.com
                '''
               }
        }
@@ -47,29 +45,30 @@ def call(Map pipelineParams = [:]) {
        steps
        {
        script
-       {      def  REPOSITORY_URI = "${pipelineParams.awsAccountId}.dkr.ecr.${pipelineParams.awsRegion}.amazonaws.com"
-              def IMAGENAMES = ['data-read', 'data-write', 'timelines']
-              for (IMAGENAME in IMAGENAMES)
+       {
+            //   List arr = image_names.split(",")
+            //   def image_names = arr
+            def image_names = ['data-read', 'data-write', 'timelines']
+             for (image_name in image_names)
               {
-                sh "cp $HOME/workspace/$projectname/ol-container-images-node/Dockerfile $HOME/workspace/$projectname/ol-services-node/ol-node-api-$IMAGENAME"
-                  dir("$HOME/workspace/$projectname/ol-services-node/ol-node-api-${IMAGENAME}")
+                sh "cp $HOME/workspace/$env.JOB_NAME/ol-container-images-node/Dockerfile $HOME/workspace/$env.JOB_NAME/ol-services-node/ol-node-api-$image_name"
+                  dir("$HOME/workspace/$env.JOB_NAME/ol-services-node/ol-node-api-${image_name}")
                   {
-                      sh "docker build -t ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} ."
-                    // sh "docker tag ${IMAGENAME} ${REPOSITORY_URI}:${IMAGEVERSION}"
-                      sh "docker push ${REPOSITORY_URI}/${IMAGENAME}:${IMAGEVERSION} "
+                      sh "docker build -t ${repository_uri}/${image_name}:${image_version} ."
+                    
+                      sh "docker push ${repository_uri}/${image_name}:${image_version} "
                   }
               }
        }
        }
        }
     }
-   //post build cleanup
+  // post build cleanup
     post {
         cleanup {
             echo "Clean up in post work space"
             cleanWs()
         }
-    
     }
 }
 }
